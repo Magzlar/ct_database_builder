@@ -1,0 +1,11 @@
+- See https://clinicaltrials.gov/data-api/api for notes on parameters 
+- See https://classic.clinicaltrials.gov/api/info/study_fields_list for notes on study field names
+
+Example dictonary for storage using NCTid as index:
+studies_data = {
+    'nct00001': {"company": "Abbvie", "enrollment_count": 200, "sponsor_type": "Industry"},
+    'nct00002': {"company": "Pfizer", "enrollment_count": 345, "sponsor_type": "Industry"},
+    etc...
+}
+
+Then store the dictionary in a local SQL database
