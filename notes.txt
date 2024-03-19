@@ -1,3 +1,34 @@
+Aim will be to build an python app that downloads a list of study field values from a specific disease area then we use the completetion date as the label and all other 
+fields will become features to train the model to predict approval date
+
+Filters for studies used to train the model for each disease area, starting with IBD;
+- Completed
+- Started => 2012
+- EU or USA
+- Industry funded
+
+Potential fields to train on (fields name as appears on CT gov API):
+
+- Condition
+- InterventionType
+- NumPhases
+- EnrollmentCount
+- PrimaryOutcomeMeasure
+- PrimaryOutcomeTimeFrame
+- NumPrimaryOutcomes
+- OrgFullName 
+- StartDate
+
+* Potential other features (more difficult to acquire or work with):
+
+- Market cap of org (this will have to be pulled from a stocks and shares API, and updated dynamically, perhaps monthly)
+- Regulatory Designations e.g. orphan disease, Breakthrough therapy, label expansion, FastTrack (will have to be obtained from elsewhere)
+- Number of study locations (will be the length of the locations list returned, but need logic to make sure all the values are unique)
+- AEs (if results are avaible could use some sort of transformation to cumlative AE data that could add weight to models decsion)
+- Approval status (would need to be pulled from another source, might be difficult to find, so might need to make a list for each disease manually)
+
+
+Information on CT gov API:
 - See https://clinicaltrials.gov/data-api/api for notes on parameters 
 - See https://classic.clinicaltrials.gov/api/info/study_fields_list for notes on study field names
 

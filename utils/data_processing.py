@@ -17,6 +17,8 @@ class DataProcessing:
                 'sponsor_type': study_info['identificationModule']["organization"]["class"],
                 'enrollment_count': study_info["designModule"]["enrollmentInfo"]["count"],
                 'status': study_info["statusModule"]["overallStatus"],
+                'start_date': study_info["statusModule"]["startDateStruct"]["date"],
+                'end_date': study_info["statusModule"]["primaryCompletionDateStruct"]["date"]
                 }
             
     def format_datetime(self,date:str)->parser.parse:
