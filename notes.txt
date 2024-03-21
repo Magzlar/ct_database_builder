@@ -1,13 +1,15 @@
 Aim will be to build an python app that downloads a list of study field values from a specific disease area then we use the completetion date as the label and all other 
 fields will become features to train the model to predict approval date
 
+Label = PrimaryCompletionDate
+
 Filters for studies used to train the model for each disease area, starting with IBD;
 - Completed
 - Started => 2012
 - EU or USA
 - Industry funded
 
-Potential fields to train on (fields name as appears on CT gov API):
+fields to train on (fields name as appears on CT gov API):
 
 - Condition
 - InterventionType
