@@ -26,7 +26,6 @@ fields to train on (fields name as appears on CT gov API):
 - Market cap of org (this will have to be pulled from a stocks and shares API, and updated dynamically, perhaps monthly)
 - Regulatory Designations e.g. orphan disease, Breakthrough therapy, label expansion, FastTrack (will have to be obtained from elsewhere)
 - Number of study locations (will be the length of the locations list returned, but need logic to make sure all the values are unique)
-- AEs (if results are avaible could use some sort of transformation to cumlative AE data that could add weight to models decsion)
 - Approval status (would need to be pulled from another source, might be difficult to find, so might need to make a list for each disease manually)
 
 

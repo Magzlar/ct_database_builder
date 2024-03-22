@@ -11,8 +11,7 @@ class ClinicalTrialError(Exception):
 class ClinicalTrial:
     BASE_URL = "https://clinicaltrials.gov/api/v2/studies"
 
-    def __init__(self, disease_area, parameters=None):
-        self.disease_area = disease_area
+    def __init__(self, parameters=None):
         self.parameters = parameters or {}
         self.studies = {}
 
