@@ -1,15 +1,15 @@
 Aim will be to build an python app that downloads a list of study field values from a specific disease area then we use the completetion date as the label and all other 
 fields will become features to train the model to predict approval date
 
-Label = PrimaryCompletionDate
-
-Filters for studies used to train the model for each disease area, starting with IBD;
+Filters we will use to retirve studies to get an ideal trainning dataset:
 - Completed
 - Started => 2012
 - EU or USA
 - Industry funded
 
-fields to train on (fields name as appears on CT gov API):
+Label we are trying to predict = PrimaryCompletionDate
+
+features to train on (field name as appears on CT gov API):
 
 - Condition
 - InterventionType
@@ -40,4 +40,4 @@ studies_data = {
     etc...
 }
 
-Then store the dictionary in a local SQL database
+V2 will store the python dictionary in a local SQL database from efficant data retirve and circumvent the daily retrival limit from CT API
