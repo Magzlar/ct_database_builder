@@ -1,29 +1,39 @@
-from   dateutil import parser
+from dateutil import parser
 import sqlite3
 import logging
 
 class DataProcessing:
+    def __init__(self, studies):
+        self.studies = studies
+        self.processed_studies = {}
+        self.process_studies()
 
-    def __init__(self,data) -> None:
-        self.studies = {}
+    def process_studies(self):
+        """Pulls data from CT gov and stores data in a dictionary"""
+        for study in self.studies:
+            study_info = study.get("protocolSection", {})
+            identification_module = study_info.get("identificationModule", {})
+            sponsor_module = study_info.get('sponsorCollabratorModule', {})
+            design_module = study_info.get("designModule", {})
+            status_module = study_info.get("statusModule", {})
 
-    def process_studies(self, studies:list):
-        """Pulls data from CT gov and stores data in dictionary"""
-        for study in studies:
-            study_info = study["protocolSection"]
-            nct_id = study_info["identificationModule"]["nctId"]
-            self.studies[nct_id] = {
-                'company': study_info["identificationModule"]["organization"]["fullName"],
-                'sponsor_type': study_info['identificationModule']["organization"]["class"],
-                'enrollment_count': study_info["designModule"]["enrollmentInfo"]["count"],
-                'status': study_info["statusModule"]["overallStatus"],
-                'start_date': study_info["statusModule"]["startDateStruct"]["date"],
-                'end_date': study_info["statusModule"]["primaryCompletionDateStruct"]["date"]
+            nct_id = identification_module.get("nctId")
+            if nct_id:
+                self.processed_studies[nct_id] = {
+                    'company': identification_module.get("organization", {}).get("fullName"),
+                    'sponsor': sponsor_module.get("leadSponsor", {}).get("name"),
+                    'enrollment_count': design_module.get("enrollmentInfo", {}).get("count"),
+                    'status': status_module.get("overallStatus"),
+                    'start_date': self.format_datetime(status_module.get("startDateStruct", {}).get("date")),
+                    'end_date': self.format_datetime(status_module.get("primaryCompletionDateStruct", {}).get("date"))
                 }
-            
-    def format_datetime(self,date:str)->parser.parse:
-        '''Return datetime object from string'''
+
+    def format_datetime(self, date: str):
+        '''Return datetime object from string, or None if parsing fails.'''
+        if date is None:
+            return None
         try:
             return parser.parse(date)
         except parser.ParserError as e:
-            logging.error("Unable to Parse date")
+            logging.error(f"Error parsing date: {date} - {e}")
+            return None
