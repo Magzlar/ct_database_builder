@@ -25,8 +25,6 @@ def main():
     
     # process the data cleaning, formating and feature engineering for SQL storage
     processor = DataProcessing(studies["studies"])
-    print("hello")
-    print(1)
 
 
 if __name__ == "__main__":
