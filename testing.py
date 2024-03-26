@@ -1,7 +1,4 @@
 ### Testing file ###
-
-
-
     # connect to anSQLite database or create in  the first instance
     # conn = sqlite3.connect('clinical_trials.db')
     # cursor = conn.cursor()

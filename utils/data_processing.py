@@ -1,6 +1,6 @@
 from dateutil import parser
-import sqlite3
 import logging
+import requests
 
 class DataProcessing:
     def __init__(self, studies):

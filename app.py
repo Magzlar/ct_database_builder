@@ -1,8 +1,7 @@
 import logging
 from utils.api import ClinicalTrial
 from utils.data_processing import DataProcessing
-import sqlite3
-import pandas
+import pandas as pd
 
 # configure the logger
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +24,9 @@ def main():
     
     # process the data cleaning, formating and feature engineering for SQL storage
     processor = DataProcessing(studies["studies"])
-
+    studies_df = pd.DataFrame.from_dict(processor.processed_studies, orient='index')
+    print(studies_df.head())
+    print("helo")
 
 if __name__ == "__main__":
     main()
