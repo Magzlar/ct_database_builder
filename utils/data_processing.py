@@ -1,6 +1,5 @@
 from dateutil import parser
 import logging
-import requests
 
 class DataProcessing:
     def __init__(self, studies):

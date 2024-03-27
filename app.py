@@ -26,7 +26,6 @@ def main():
     processor = DataProcessing(studies["studies"])
     studies_df = pd.DataFrame.from_dict(processor.processed_studies, orient='index')
     print(studies_df.head())
-    print("helo")
 
 if __name__ == "__main__":
     main()
