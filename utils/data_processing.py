@@ -1,7 +1,11 @@
 from dateutil import parser
 import logging
+import requests
+import os
 
 class DataProcessing:
+    API_key = os.getenv("API_key")
+
     def __init__(self, studies):
         self.studies = studies
         self.processed_studies = {}
@@ -24,7 +28,8 @@ class DataProcessing:
                     'enrollment_count': design_module.get("enrollmentInfo", {}).get("count"),
                     'status': status_module.get("overallStatus"),
                     'start_date': self.format_datetime(status_module.get("startDateStruct", {}).get("date")),
-                    'end_date': self.format_datetime(status_module.get("primaryCompletionDateStruct", {}).get("date"))
+                    'end_date': self.format_datetime(status_module.get("primaryCompletionDateStruct", {}).get("date")),
+                    "market_cap":self.get_market_cap(identification_module.get("organization",{}).get("fullName"))
                 }
 
     def format_datetime(self, date: str):
@@ -36,3 +41,19 @@ class DataProcessing:
         except parser.ParserError as e:
             logging.error(f"Error parsing date: {date} - {e}")
             return None
+        
+    def get_market_cap(self,company_name:str):
+        url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={company_name}&apikey={DataProcessing.API_key}'
+        try:
+            response = requests.get(url)
+            data = response.json()
+            return data
+        except requests.ConnectionError as e:
+            logging.error(f"Could not establish a connection with {url}")
+            return None
+        finally:
+            logging.error("Unknown error")
+            return None
+
+
+

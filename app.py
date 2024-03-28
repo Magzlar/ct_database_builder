@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def main():
     # set params for API request
     disease_area = 'Psoriatic arthritis'
-    fields = "Condition|InterventionType|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|NumPrimaryOutcomes|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LeadSponsorName"
+    fields = "Condition|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|NumPrimaryOutcomes|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LeadSponsorName"
     query_term = "AREA[StartDate]RANGE[2013-01-01,MAX]"
     parameters = {'query.cond': disease_area, "query.term":query_term, "fields": fields,'format': 'json'}
 
