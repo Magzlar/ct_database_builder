@@ -10,9 +10,16 @@ logger = logging.getLogger(__name__)
 def main():
     # set params for API request
     disease_area = 'Psoriatic arthritis'
-    fields = "Condition|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|NumPrimaryOutcomes|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LeadSponsorName"
-    query_term = "AREA[StartDate]RANGE[2013-01-01,MAX]"
-    parameters = {'query.cond': disease_area, "query.term":query_term, "fields": fields,'format': 'json'}
+    fields = "Condition|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LocationFacility"
+    earliest_date = "AREA[StartDate]RANGE[2013-01-01,MAX]"
+    phases = "AREA[Phase]PHASE2 OR PHASE3"
+    parameters = {'query.cond': disease_area, 
+                  "query.term":earliest_date, 
+                  "fields": fields,
+                  'format': 'json',
+                  "filter.overallStatus":"COMPLETED",
+                  "filter.advanced":phases,
+                  "pageSize":100}
 
     # make an instance of ClinicalTrial class and fetch the studies
     ct_api = ClinicalTrial(parameters)

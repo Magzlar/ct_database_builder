@@ -13,13 +13,14 @@ features to train on (field name as appears on CT gov API):
 
 - Condition
 - InterventionType
-- NumPhases
+- Phases
 - EnrollmentCount
 - PrimaryOutcomeMeasure
 - PrimaryOutcomeTimeFrame
 - NumPrimaryOutcomes
 - OrgFullName 
 - StartDate
+- PrimaryCompletionDate
 
 * Potential other features (more difficult to acquire or work with):
 

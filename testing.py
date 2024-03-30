@@ -28,3 +28,5 @@
     # conn.commit()
     # conn.close()
     # logger.info("All studies have been succesfully stored in the database.")
+
+
