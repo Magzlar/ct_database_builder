@@ -30,25 +30,25 @@ class DataProcessing:
         for study in self.studies:
             study_info = study.get("protocolSection", {})
             identification_module = study_info.get("identificationModule", {})
-            sponsor_module = study_info.get('sponsorCollabratorModule', {})
             design_module = study_info.get("designModule", {})
             status_module = study_info.get("statusModule", {})
             outcome_module = study_info.get('outcomesModule', {})
+            locations_module = study_info["contactsLocationsModule"].get('locations', {})
 
             nct_id = identification_module.get("nctId")
             if nct_id:
                 self.processed_studies[nct_id] = {
                     'company': identification_module.get("organization", {}).get("fullName"),
-                    'sponsor': sponsor_module.get("leadSponsor", {}).get("name"),
                     'enrollment_count': design_module.get("enrollmentInfo", {}).get("count"),
                     'status': status_module.get("overallStatus"),
-                    'primary_outcome_measure': outcome_module.get("primaryOutcomes"[0], {}).get("measure"),
-                    'primary_outcome_timeframe': self.convert_to_relativedelta(outcome_module["primaryOutcomes"][0]["timeFrame"]),
-                    'study_facilities':[x["facility"] for x in study_info["contactsLocationsModule"]["locations"]],
-                    'locations_count': len(study_info["contactsLocationsModule"]["locations"]),
+                    'primary_outcome_measures': [x["measure"] for x in outcome_module["primaryOutcomes"]],
+                    'primary_outcome_timeframes': self.convert_to_relativedelta( [x["timeFrame"] for x in outcome_module["primaryOutcomes"]]),
+                    'facilites_count': len(locations_module),
+                    "city_count": len(list(set([x["city"] for x in locations_module]))),
+                    'countries_count':len(list(set([x["country"] for x in locations_module]))),
                     'start_date': self.format_datetime(status_module.get("startDateStruct", {}).get("date")),
                     'end_date': self.format_datetime(status_module.get("primaryCompletionDateStruct", {}).get("date")),
-                    "market_cap":self.get_market_cap(identification_module.get("organization",{}).get("fullName")) # need to add number of study locations
+                    #"market_cap":self.get_market_cap(identification_module.get("organization",{}).get("fullName")) # need create mapping for company names a tickers moght be better to do this in a seperate file once got the data
                 }
 
     def format_datetime(self, date: str)->parser:
@@ -74,27 +74,29 @@ class DataProcessing:
             logging.error("Unknown error")
             return None
         
-    def convert_to_relativedelta(time_frame_str:str=None)->relativedelta:
-        """Returns relativedelta object from string by finding the time unit and returning it's qunatity in days """
+    def convert_to_relativedelta(self,time_frame_str:list=None)->relativedelta:
+        """Returns relativedelta object from string by finding the time unit and returning it's qunatity in days"""
 
-        unit_list = []
-        time_list = []
+        unit_list = [] # holds the unit of time e.g. days, week, month
+        amount_list = [] # holds the amount of that time
 
-        time_frame_str_lower = time_frame_str.lower()
+        for x in time_frame_str:
 
-        time_frame_list = time_frame_str_lower.split(" ")
+            time_frame_str_lower = x.lower()
 
-        for i in time_frame_list:
-            if i in ["day","week","month","year"]:
-                unit_list.append(DataProcessing.relativedelta_mapping[i])
-            elif re.match("\d+",i):
-                time_list.append(int(i))
-            else:
-                continue
+            time_frame_list = time_frame_str_lower.split(" ")
 
-        rd = relativedelta.relativedelta(days=(unit_list[0]*time_list[0]))
+            for i in time_frame_list:
+                if i in ["day","week","month","year"]:
+                    unit_list.append(DataProcessing.relativedelta_mapping[i])
+                elif re.match("\d+",i):
+                    amount_list.append(int(i))
+                else:
+                    continue
 
-        return rd
+            time_list = [a * b for a, b in zip(unit_list, amount_list)] # list of relative time deltas in days to return 
+            return [relativedelta(day=x) for x in time_list]
+    
     
     def get_approval_status(self,asset:str)->str:
         pass 

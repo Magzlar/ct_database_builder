@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def main():
     # set params for API request
     disease_area = 'Psoriatic arthritis'
-    fields = "Condition|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LocationFacility"
+    fields = "Condition|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LocationFacility|LocationCity|LocationCountry|OverallStatus"
     filter = "AREA[StartDate]RANGE[2013-01-01,MAX] AND AREA[Phase]PHASE2 OR PHASE3 AND AREA[OverallStatus]COMPLETED"
     parameters = {'query.cond': disease_area, 
                   "query.term":filter, 
