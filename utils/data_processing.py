@@ -8,6 +8,17 @@ import os
 class DataProcessing:
 
     API_key = os.getenv("alphavantage_api_key")
+    # Mapping for plural as relativedelta only work with plurals
+    relativedelta_mapping = {
+                "day":1,
+                "days":1,
+                "week":7,
+                "weeks":7,
+                "month":30,
+                "months":30,
+                "year":365,
+                "years":365
+                }
 
     def __init__(self, studies):
         self.studies = studies
@@ -31,8 +42,8 @@ class DataProcessing:
                     'sponsor': sponsor_module.get("leadSponsor", {}).get("name"),
                     'enrollment_count': design_module.get("enrollmentInfo", {}).get("count"),
                     'status': status_module.get("overallStatus"),
-                    'primary_outcome_measure': outcome_module.get("primaryOutcomes", {}).get("measure"),
-                    'primary_outcome_timeframe': self.convert_to_relativedelta(outcome_module["primaryOutcomes"]["timeFrame"]),
+                    'primary_outcome_measure': outcome_module.get("primaryOutcomes"[0], {}).get("measure"),
+                    'primary_outcome_timeframe': self.convert_to_relativedelta(outcome_module["primaryOutcomes"][0]["timeFrame"]),
                     'study_facilities':[x["facility"] for x in study_info["contactsLocationsModule"]["locations"]],
                     'locations_count': len(study_info["contactsLocationsModule"]["locations"]),
                     'start_date': self.format_datetime(status_module.get("startDateStruct", {}).get("date")),
@@ -64,25 +75,26 @@ class DataProcessing:
             return None
         
     def convert_to_relativedelta(time_frame_str:str=None)->relativedelta:
-        """Returns relativedelta object from string"""
+        """Returns relativedelta object from string by finding the time unit and returning it's qunatity in days """
 
-        time_unit_to_relativedelta_param = {
-            'year': 'years',
-            'month': 'months',
-            'week': 'weeks',
-            'day': 'days'
-        }
-        
-        match = re.match(r'(\d+)\s*(year|month|week|day)s?', time_frame_str)
-        
-        if not match:
-            raise ValueError(f"Invalid time frame format: {time_frame_str}")
-        
-        number_of_units, unit = int(match.group(1)), match.group(2)
+        unit_list = []
+        time_list = []
 
-        relativedelta_param = time_unit_to_relativedelta_param[unit]
-        
-        return relativedelta(**{relativedelta_param: number_of_units})
+        time_frame_str_lower = time_frame_str.lower()
+
+        time_frame_list = time_frame_str_lower.split(" ")
+
+        for i in time_frame_list:
+            if i in ["day","week","month","year"]:
+                unit_list.append(DataProcessing.relativedelta_mapping[i])
+            elif re.match("\d+",i):
+                time_list.append(int(i))
+            else:
+                continue
+
+        rd = relativedelta.relativedelta(days=(unit_list[0]*time_list[0]))
+
+        return rd
     
     def get_approval_status(self,asset:str)->str:
         pass 

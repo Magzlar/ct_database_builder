@@ -11,14 +11,12 @@ def main():
     # set params for API request
     disease_area = 'Psoriatic arthritis'
     fields = "Condition|Phase|EnrollmentCount|PrimaryOutcomeMeasure|PrimaryOutcomeTimeFrame|OrgFullName|StartDate|PrimaryCompletionDate|NCTId|LocationFacility"
-    earliest_date = "AREA[StartDate]RANGE[2013-01-01,MAX]"
-    phases = "AREA[Phase]PHASE2 OR PHASE3"
+    filter = "AREA[StartDate]RANGE[2013-01-01,MAX] AND AREA[Phase]PHASE2 OR PHASE3 AND AREA[OverallStatus]COMPLETED"
     parameters = {'query.cond': disease_area, 
-                  "query.term":earliest_date, 
+                  "query.term":filter, 
                   "fields": fields,
                   'format': 'json',
                   "filter.overallStatus":"COMPLETED",
-                  "filter.advanced":phases,
                   "pageSize":100}
 
     # make an instance of ClinicalTrial class and fetch the studies
