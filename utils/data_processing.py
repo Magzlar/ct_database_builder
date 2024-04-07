@@ -19,6 +19,7 @@ class DataProcessing:
                 "year":365,
                 "years":365
                 }
+    counter = 0
 
     def __init__(self, studies):
         self.studies = studies
@@ -27,13 +28,17 @@ class DataProcessing:
 
     def process_studies(self):
         """Pulls data from CT gov and stores data in a dictionary"""
+
         for study in self.studies:
+            DataProcessing.counter += 1 
+            print(DataProcessing.counter)
             study_info = study.get("protocolSection", {})
             identification_module = study_info.get("identificationModule", {})
             design_module = study_info.get("designModule", {})
             status_module = study_info.get("statusModule", {})
             outcome_module = study_info.get('outcomesModule', {})
-            locations_module = study_info["contactsLocationsModule"].get('locations', {})
+            locations_module = study_info.get("contactsLocationsModule",{}).get('locations', [])
+            primary_outcomes = outcome_module.get("primaryOutcomes",[{"":""}])
 
             nct_id = identification_module.get("nctId")
             if nct_id:
@@ -41,8 +46,8 @@ class DataProcessing:
                     'company': identification_module.get("organization", {}).get("fullName"),
                     'enrollment_count': design_module.get("enrollmentInfo", {}).get("count"),
                     'status': status_module.get("overallStatus"),
-                    'primary_outcome_measures': [x["measure"] for x in outcome_module["primaryOutcomes"]],
-                    'primary_outcome_timeframes': self.convert_to_relativedelta( [x["timeFrame"] for x in outcome_module["primaryOutcomes"]]),
+                    'primary_outcome_measures': [x.get("measure","") for x in primary_outcomes],
+                    'primary_outcome_timeframes': self.convert_to_relativedelta([x.get("timeFrame", "") for x in primary_outcomes]),
                     'facilites_count': len(locations_module),
                     "city_count": len(list(set([x["city"] for x in locations_module]))),
                     'countries_count':len(list(set([x["country"] for x in locations_module]))),
@@ -79,18 +84,21 @@ class DataProcessing:
 
         unit_list = [] # holds the unit of time e.g. days, week, month
         amount_list = [] # holds the amount of that time
+        pattern = r"[,\(\)]"
 
         for x in time_frame_str:
 
             time_frame_str_lower = x.lower()
+            remove_dash = re.sub("-", " ", time_frame_str_lower)
+            remove_punc = re.sub(pattern, "", remove_dash)
 
-            time_frame_list = time_frame_str_lower.split(" ")
+            time_frame_list = remove_punc.split(" ")
 
             for i in time_frame_list:
                 if i in ["day","week","month","year"]:
                     unit_list.append(DataProcessing.relativedelta_mapping[i])
                 elif re.match("\d+",i):
-                    amount_list.append(int(i))
+                    amount_list.append(float(i))
                 else:
                     continue
 
