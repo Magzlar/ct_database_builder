@@ -39,6 +39,7 @@ class DataProcessing:
             outcome_module = study_info.get('outcomesModule', {})
             locations_module = study_info.get("contactsLocationsModule",{}).get('locations', [])
             primary_outcomes = outcome_module.get("primaryOutcomes",[{"":""}])
+            eligibility_criteria = study_info.get("eligibilityModule",{})
 
             nct_id = identification_module.get("nctId")
             if nct_id:
@@ -53,6 +54,7 @@ class DataProcessing:
                     'countries_count':len(list(set([x["country"] for x in locations_module]))),
                     'start_date': self.format_datetime(status_module.get("startDateStruct", {}).get("date")),
                     'end_date': self.format_datetime(status_module.get("primaryCompletionDateStruct", {}).get("date")),
+                    'age_range': self.age_range(eligibility_criteria.get("minimumAge"),eligibility_criteria.get("maximumAge"))
                     #"market_cap":self.get_market_cap(identification_module.get("organization",{}).get("fullName")) # need create mapping for company names a tickers moght be better to do this in a seperate file once got the data
                 }
 
@@ -107,6 +109,9 @@ class DataProcessing:
     
     
     def get_approval_status(self,asset:str)->str:
-        pass 
+        # Can use the drug bank API for this, would it be best to hou
+
+    def age_range(self,minimum:str,maximum:str)->tuple:
+        return (int(minimum),int(maximum))
 
 
