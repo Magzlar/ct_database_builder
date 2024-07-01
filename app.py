@@ -30,6 +30,7 @@ def main():
     # process the data cleaning, formating and feature engineering for SQL storage
     processor = DataProcessing(studies["studies"])
     studies_df = pd.DataFrame.from_dict(processor.processed_studies, orient='index')
+    studies_df.to_csv(r"C:\Users\ryanm\Documents\Code\ct_database_builder\ct_tester.csv")
     print(studies_df.head())
 
 if __name__ == "__main__":
